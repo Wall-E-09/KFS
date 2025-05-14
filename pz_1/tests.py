@@ -1,56 +1,54 @@
+from config import BASE_TARIFF_DAY, BASE_TARIFF_NIGHT, HIGH_TARIFF_DAY, HIGH_TARIFF_NIGHT, TARIFF_LIMIT
 import unittest
 from logic import calculate_bill, process_meter_data
-from database import meters, history
-from bson import ObjectId
-import os
-from file_export import export_history_to_file, generate_receipt
+from unittest.mock import patch, MagicMock
+from datetime import datetime
+from database import meters, history, bills
 
 class TestEnergySystem(unittest.TestCase):
-    TEST_METER_ID = "test_meter_123"
-    
-    def setUp(self):
-        # Очищаємо тестові дані
-        meters.delete_one({"meter_id": self.TEST_METER_ID})
-        history.delete_many({"meter_id": self.TEST_METER_ID})
-        
-        # Видаляємо тестові файли експорту
-        if os.path.exists("exports"):
-            for f in os.listdir("exports"):
-                if f.startswith(self.TEST_METER_ID):
-                    os.remove(os.path.join("exports", f))
+    def test_calculate_bill_base_tariff(self):
+        result = calculate_bill(100, 50, 0)
+        expected = 100 * BASE_TARIFF_DAY + 50 * BASE_TARIFF_NIGHT
+        self.assertAlmostEqual(result, expected)
 
-    def test_calculate_bill(self):
-        self.assertEqual(calculate_bill(10, 5), 10*2.5 + 5*1.2)
-        self.assertEqual(calculate_bill(0, 0), 0)
-        
-    def test_process_meter_data(self):
-        # Тестуємо основну функціональність
-        bill = process_meter_data(self.TEST_METER_ID, 100, 50)
-        self.assertEqual(bill, 0)
-        
-        bill = process_meter_data(self.TEST_METER_ID, 150, 80)
-        self.assertAlmostEqual(bill, (150-100)*2.5 + (80-50)*1.2)
-        
-        # Перевіряємо, що квитанція створилась
-        receipt_files = [f for f in os.listdir("exports") if f.startswith(f"receipt_{self.TEST_METER_ID}")]
-        self.assertEqual(len(receipt_files), 1)
-        
-    def test_export_functions(self):
-        # Підготуємо тестові дані
-        process_meter_data(self.TEST_METER_ID, 100, 50)
-        process_meter_data(self.TEST_METER_ID, 150, 80)
-        
-        # Тестуємо експорт історії
-        history_data = list(history.find({"meter_id": self.TEST_METER_ID}))
-        filename = export_history_to_file(self.TEST_METER_ID, history_data)
-        self.assertTrue(os.path.exists(filename))
-        
-        # Тестуємо генерацію квитанції
-        receipt_file = generate_receipt(self.TEST_METER_ID, history_data[-1])
-        self.assertTrue(os.path.exists(receipt_file))
+    def test_calculate_bill_high_tariff(self):
+        result = calculate_bill(100, 50, TARIFF_LIMIT)
+        expected = 100 * HIGH_TARIFF_DAY + 50 * HIGH_TARIFF_NIGHT
+        self.assertAlmostEqual(result, expected)
 
-    def tearDown(self):
-        self.setUp()
+    def test_calculate_bill_mixed_tariff(self):
+        result = calculate_bill(300, 200, TARIFF_LIMIT - 250)
+        self.assertGreater(result, 300 * BASE_TARIFF_DAY + 200 * BASE_TARIFF_NIGHT)
+        self.assertLess(result, 300 * HIGH_TARIFF_DAY + 200 * HIGH_TARIFF_NIGHT)
+
+    def test_process_meter_data_new_meter(self):
+        result = process_meter_data("test_meter_1", 100, 50)
+        self.assertEqual(result["amount"], 0)
+        self.assertEqual(result["used_day"], 0)
+        self.assertEqual(result["used_night"], 0)
+        self.assertEqual(meters.count_documents({"meter_id": "test_meter_1"}), 1)
+        self.assertEqual(bills.count_documents({"meter_id": "test_meter_1"}), 1)
+
+    def test_process_meter_data_existing_meter(self):
+        process_meter_data("test_meter_2", 100, 50)
+        result = process_meter_data("test_meter_2", 150, 80)
+        
+        self.assertGreater(result["amount"], 0)
+        self.assertEqual(result["used_day"], 50)
+        self.assertEqual(result["used_night"], 30)
+        self.assertEqual(history.count_documents({"meter_id": "test_meter_2"}), 2)
+        self.assertEqual(bills.count_documents({"meter_id": "test_meter_2"}), 2)
+
+    def test_process_meter_data_counter_rollback(self):
+
+        process_meter_data("test_meter_3", 100, 50)
+        result = process_meter_data("test_meter_3", 90, 40)
+        
+        meter = meters.find_one({"meter_id": "test_meter_3"})
+        self.assertEqual(meter["current_day"], 190)
+        self.assertEqual(meter["current_night"], 120)
+        self.assertEqual(result["used_day"], 90)
+        self.assertEqual(result["used_night"], 70)
 
 if __name__ == "__main__":
     unittest.main()

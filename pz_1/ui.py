@@ -30,8 +30,6 @@ class EnergyApp:
         tk.Button(root, text="Показати історію", command=self.show_history).grid(row=4, column=0, columnspan=2)
         tk.Button(root, text="Показати лічильники", command=self.show_meters).grid(row=5, column=0, columnspan=2)
         tk.Button(root, text="Показати рахунки", command=self.show_bills).grid(row=6, column=0, columnspan=2)
-        
-        # Додано нові кнопки
         tk.Button(root, text="Експортувати історію", command=self.export_history).grid(row=7, column=0, pady=5)
         tk.Button(root, text="Відкрити папку з квитанціями", command=self.open_receipts_folder).grid(row=7, column=1, pady=5)
         tk.Button(root, text="Згенерувати квитанцію", command=self.generate_receipt).grid(row=8, column=0, columnspan=2, pady=5)
@@ -110,7 +108,6 @@ class EnergyApp:
             messagebox.showerror("Помилка", "Введіть номер лічильника")
             return
         
-        # Отримуємо останній рахунок та історію
         last_bill = bills.find_one({"meter_id": meter_id}, sort=[("date", -1)])
         if not last_bill:
             messagebox.showinfo("Інформація", "Немає даних для генерації квитанції")
@@ -123,17 +120,14 @@ class EnergyApp:
             messagebox.showerror("Помилка", "Дані лічильника не знайдені")
             return
         
-        # Отримуємо тарифи з config
         from config import (BASE_TARIFF_DAY, BASE_TARIFF_NIGHT,
                         HIGH_TARIFF_DAY, HIGH_TARIFF_NIGHT,
                         TARIFF_LIMIT)
         
-        # Розрахункові дані
         prev_total = meter_data.get("total_consumption", 0) - last_history['used_day'] - last_history['used_night']
         current_total = meter_data.get("total_consumption", 0)
         tariff_type = "Базовий" if current_total <= TARIFF_LIMIT else "Підвищений"
         
-        # Формуємо деталі розрахунку
         if current_total <= TARIFF_LIMIT:
             day_cost = last_history['used_day'] * BASE_TARIFF_DAY
             night_cost = last_history['used_night'] * BASE_TARIFF_NIGHT
@@ -152,7 +146,6 @@ class EnergyApp:
                 day_cost = base_part_day * BASE_TARIFF_DAY + (last_history['used_day'] - base_part_day) * HIGH_TARIFF_DAY
                 night_cost = base_part_night * BASE_TARIFF_NIGHT + (last_history['used_night'] - base_part_night) * HIGH_TARIFF_NIGHT
         
-        # Формуємо текст квитанції
         receipt_text = f"""
         {'='*50}
         КВИТАНЦІЯ №{last_bill['date']}
@@ -183,7 +176,6 @@ class EnergyApp:
         {'='*50}
         """
         
-        # Зберігаємо квитанцію у файл
         receipts_path = os.path.abspath("receipts")
         os.makedirs(receipts_path, exist_ok=True)
         filename = os.path.join(receipts_path, f"receipt_{meter_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
