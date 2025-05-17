@@ -1,0 +1,132 @@
+[
+  {
+    "_id": "6824f32f54b52f939c5d5d0f",
+    "meter_id": "12",
+    "date": "2025-05-14 22:46:55",
+    "prev_day": 100,
+    "prev_night": 80,
+    "curr_day": 110,
+    "curr_night": 90,
+    "bill": 37.0
+  },
+  {
+    "_id": "682507d036d6f1b1ecdfea3c",
+    "meter_id": "12",
+    "prev_day": 0,
+    "prev_night": 0,
+    "new_day": 220,
+    "new_night": 150,
+    "date": "2025-05-15T00:14:56.887929",
+    "used_day": 220,
+    "used_night": 150
+  },
+  {
+    "_id": "682507df36d6f1b1ecdfea3e",
+    "meter_id": "12",
+    "prev_day": 220,
+    "prev_night": 150,
+    "new_day": 220,
+    "new_night": 150,
+    "date": "2025-05-15T00:15:11.310718",
+    "used_day": 0,
+    "used_night": 0
+  },
+  {
+    "_id": "68250891c058c4c7a776bf67",
+    "meter_id": "12",
+    "prev_day": 220,
+    "prev_night": 150,
+    "new_day": 250,
+    "new_night": 200,
+    "date": "2025-05-15T00:18:09.400649",
+    "used_day": 30,
+    "used_night": 50
+  },
+  {
+    "_id": "6825090b534a7b2f17e18b27",
+    "meter_id": "12",
+    "prev_day": 250,
+    "prev_night": 200,
+    "new_day": 300,
+    "new_night": 250,
+    "date": "2025-05-15T00:20:11.257985",
+    "used_day": 50,
+    "used_night": 50
+  },
+  {
+    "_id": "68250ad0014951589e24e6c0",
+    "meter_id": "12",
+    "prev_day": 300,
+    "prev_night": 250,
+    "new_day": 350,
+    "new_night": 300,
+    "date": "2025-05-15T00:27:44.682701",
+    "used_day": 50,
+    "used_night": 50,
+    "amount": 198.0
+  },
+  {
+    "_id": "68250aeb014951589e24e6c2",
+    "meter_id": "12",
+    "prev_day": 350,
+    "prev_night": 300,
+    "new_day": 400,
+    "new_night": 350,
+    "date": "2025-05-15T00:28:11.866814",
+    "used_day": 50,
+    "used_night": 50,
+    "amount": 198.0
+  },
+  {
+    "_id": "68250b5b51e3d73badacabee",
+    "meter_id": "12",
+    "prev_day": 400,
+    "prev_night": 350,
+    "new_day": 450,
+    "new_night": 380,
+    "date": "2025-05-15T00:30:03.175768",
+    "used_day": 50,
+    "used_night": 30,
+    "amount": 171.6,
+    "total_consumption": 280
+  },
+  {
+    "_id": "68250b8151e3d73badacabf0",
+    "meter_id": "12",
+    "prev_day": 450,
+    "prev_night": 380,
+    "new_day": 500,
+    "new_night": 400,
+    "date": "2025-05-15T00:30:41.163363",
+    "used_day": 50,
+    "used_night": 20,
+    "amount": 158.4,
+    "total_consumption": 350
+  },
+  {
+    "_id": "68250c1e6d8fef6662124932",
+    "meter_id": "12",
+    "prev_day": 500,
+    "prev_night": 400,
+    "new_day": 600,
+    "new_night": 550,
+    "date": "2025-05-15T00:33:18.069805",
+    "used_day": 100,
+    "used_night": 150,
+    "amount": 462.0,
+    "total_consumption": 600
+  },
+  {
+    "_id": "68288283ff26742413569840",
+    "meter_id": "12",
+    "prev_day": 600,
+    "prev_night": 550,
+    "new_day": 1000,
+    "new_night": 800,
+    "date": "2025-05-17T15:35:15.118209",
+    "used_day": 400,
+    "used_night": 250,
+    "amount": 1386.0,
+    "total_consumption": 1250
+  }
+]

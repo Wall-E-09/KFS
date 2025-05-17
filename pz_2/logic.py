@@ -76,7 +76,7 @@ def process_meter_data(meter_id, new_day, new_night, date=None):
         used_day = 0
         used_night = 0
         amount = 0
-        prev_total = 0  # Додано ініціалізацію для нового лічильника
+        prev_total = 0
         meters.insert_one({
             "meter_id": meter_id,
             "current_day": new_day,
@@ -85,7 +85,6 @@ def process_meter_data(meter_id, new_day, new_night, date=None):
             "total_consumption": 0
         })
     
-    # Виправлено умову для tariff_type
     current_total = prev_total + used_day + used_night
     bills.insert_one({
         "meter_id": meter_id,
