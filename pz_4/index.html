@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <script>
+        let lorenz1, lorenz2, lorenz3;
+        let points1 = [], points2 = [], points3 = [];
+        let hues = [0, 120, 240];
+
+        function setup() {
+            createCanvas(1920, 1080, WEBGL);
+            colorMode(RGB);
+            lorenz1 = { x: 0.1, y: 0, z: 0, sigma: 10, rho: 28, beta: 8/3 };
+            lorenz2 = { x: 0.11, y: 0, z: 0, sigma: 10, rho: 28, beta: 8/3 };
+            lorenz3 = { x: 0.101, y: 0, z: 0, sigma: 10, rho: 28, beta: 8/3 };
+        }
+
+        function draw() {
+            background(0);
+            scale(7);
+
+            updateAndDraw(lorenz1, points1, hues[0]);
+            updateAndDraw(lorenz2, points2, hues[1]);
+            updateAndDraw(lorenz3, points3, hues[2]);
+        }
+
+        function updateAndDraw(lorenz, points, hue) {
+            let dt = 0.01;
+            let dx = lorenz.sigma * (lorenz.y - lorenz.x);
+            let dy = lorenz.x * (lorenz.rho - lorenz.z) - lorenz.y;
+            let dz = lorenz.x * lorenz.y - lorenz.beta * lorenz.z;
+
+            lorenz.x += dx * dt;
+            lorenz.y += dy * dt;
+            lorenz.z += dz * dt;
+
+            points.push(createVector(lorenz.x, lorenz.y, lorenz.z));
+
+            noFill();
+            beginShape();
+            for (let i = 0; i < points.length; i++) {
+                let col = color(hue + i / 50 % 360, 100, 100);
+                stroke(col);
+                vertex(points[i].x, points[i].y, points[i].z);
+            }
+            endShape();
+        }
+    </script>
+</body>
+</html>
